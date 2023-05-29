@@ -1,0 +1,45 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+const t = useTranslations(getLangFromUrl(Astro.url));
+// const lang = getLangFromUrl(Astro.url)
+
+const { title, lang } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- TODO: Sort out font caching issue when offline -->
+    
+    <script
+      src="https://kit.fontawesome.com/731df6c86c.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- TODO: Implement service worker for offline use -->
+  </head>
+  <body>
+    <!-- TODO: Do Navigation -->
+    <header></header>
+    
+    <slot />
+
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    font-family: "Cormorant Garamond", serif;
+  }
+</style>

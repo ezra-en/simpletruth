@@ -1,0 +1,57 @@
+---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+import { getCollection } from "astro:content";
+const allGuides = await getCollection("guides");
+
+import NavLayout from "../../layouts/NavLayout.astro";
+import Card from "../../components/Card.astro";
+import LangPicker from "../../components/LangPicker.astro";
+
+import type { CollectionEntry } from "astro:content";
+
+function sortGuides(
+  a: CollectionEntry<"guides">,
+  b: CollectionEntry<"guides">
+) {
+  return a.data.order - b.data.order;
+}
+
+allGuides.sort(sortGuides);
+
+import { Debug } from "astro/components";
+---
+
+<!-- Front Page -->
+<NavLayout title={t("name")} lang={lang}>
+  <div class="text-2xl sm:text-2xl lg:text-3xl">
+    <!-- Hero -->
+    <div class="h-[95vh] sm:h-[91vh] m-5 sm:m-10 border-2 border-zinc-900">
+      <div
+        class="h-full flex flex-col items-center justify-center text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-medium tracking-wider">
+        <h1 class="w-min xl:w-max text-center leading-[1.4em]">
+          {t("name").toUpperCase()}
+        </h1>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap me-5 sm:me-10 sm:mb-5">
+      <div class="pr-5 sticky text-lg flex w-full justify-end">
+        <LangPicker />
+      </div>
+      {
+        allGuides.map((p) => (
+          <Card
+            title={p.data.order + ". " + p.data.title}
+            icon={p.data.icon}
+            body={p.data.description}
+            href={"/" + p.slug}
+          />
+        ))
+      }
+    </div>
+  </div>
+</NavLayout>

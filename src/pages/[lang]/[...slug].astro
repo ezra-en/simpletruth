@@ -1,0 +1,139 @@
+---
+export interface Props {
+  title: string;
+}
+const { lang, slug } = Astro.params;
+
+import { getEntryBySlug } from "astro:content";
+
+const page = await getEntryBySlug("guides", `${lang}/${slug}`);
+if (!page) {
+  return Astro.redirect("/404");
+}
+
+const formattedDate = page.data.date.toLocaleString(lang);
+const { Content, headings } = await page.render();
+
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+const t = useTranslations(getLangFromUrl(Astro.url));
+
+import NavLayout from "../../layouts/NavLayout.astro";
+---
+
+<!-- Guide Astro Template -->
+<NavLayout title={page.data.title + " - " + t("name")}>
+  <!-- <div class="flex justify-center"> -->
+  <!-- <article
+      class="prose prose-lg max-w-full p-4 
+            sm:p-10 sm:prose-lg 
+            md:p-16 md:prose-xl 
+            xl:prose-2xl xl:max-w-6xl"
+      > -->
+  <article class="">
+    <Content />
+    <!-- TODO: Video -->
+
+    <a
+      class="block p-3 m-3 border-2 border-black text-center"
+      href={"/pdfs/" + page.data.pdf}>{t("pdfButton")}</a
+    >
+
+    <p>
+      {t("version")}
+      {page.data.version} • {t("lastUpdated")}
+      {formattedDate}
+    </p>
+  </article>
+  <!-- </div> -->
+</NavLayout>
+
+<style is:global>
+  html {
+    font-family: "Cormorant Garamond", serif;
+    /* background-color: #f6f6f6; */
+  }
+  /* base */
+  body {
+    display: flex;
+    /* justify-content: center; */
+  }
+  article h1 {
+    font-weight: 100;
+    font-size: 1.2em; /* ~40px */
+    line-height: 1em;
+    letter-spacing: 0.4em;
+    text-align: center;
+    padding-top: 0.7em;
+    padding-block-end: 0.5em;
+  }
+  article h2 {
+    font-weight: 600;
+    font-size: 1em; /* 28.8px */
+    padding-block-start: 1.2rem;
+    padding-block-end: 1rem;
+  }
+  article p {
+    font-size: 1em; /* 24px */
+    padding-block-end: 0.5rem;
+  }
+  article img {
+    /* align-content: center; */
+  }
+  article blockquote {
+    /* border-left: 4px solid black; */
+    padding-left: 0.7em;
+    margin-block: 0.7em;
+    background-color: white;
+    text-align: center;
+  }
+  article #pdf {
+  }
+  article {
+    /* max-width: 1280px; */
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 1.5rem; /* 16px */
+    line-height: 1.6em;
+    padding-inline: 2rem;
+  }
+  /* sm: */
+  @media (min-width: 640px) {
+    body {
+      justify-content: center;
+    }
+    article h1 {
+      font-size: 2em;
+    }
+    article h2 {
+    font-weight: 600;
+    font-size: 1.2em; /* 28.8px */
+    padding-block-start: 1.2rem;
+    padding-block-end: 1rem;
+  }
+  }
+
+  /* xl: */
+  @media (min-width: 1280px) {
+    article h1 {
+      font-weight: 100;
+      font-size: 4em; /* ~40px */
+      letter-spacing: 0.4em;
+      text-align: center;
+      padding-top: 7rem; /*112px */
+      padding-block-end: 5rem; /* 80px */
+    }
+    article h2 {
+    font-weight: 600;
+    font-size: 1.2em; /* 28.8px */
+    padding-block-start: 1.2rem;
+    padding-block-end: 1rem;
+  }
+    article {
+      max-width: 1280px;
+      font-size: 1.5rem; /* 16px */
+      line-height: 2.25rem;
+      padding-inline: 7rem;
+    }
+  }
+</style>
